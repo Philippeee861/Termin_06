@@ -1,25 +1,23 @@
 name: C++ Automated Test Suite
 on:
- push:
- branches: [ "main" ] # Pipeline startet bei jedem Push auf den main-Branch
+  push:
+   branches: [ "main" ] # Pipeline startet bei jedem Push auf den main-Branch
 jobs:
- build-and-test:
- runs-on: ubuntu-latest # Startet eine komplett frische Linux-Maschine
-(Ubuntu)
- steps:
- - name: Quellcode auschecken
- uses: actions/checkout@v4 # Kopiert den C++ Code aus dem Repo auf den
-Runner
- - name: Kompiliere den Simulator
- # Flags erklärt:
- # -std=c++17 zwingend nötig für Smart Pointer (make_unique)
- # -Wall -Wextra aktiviert alle wichtigen Compiler-Warnungen
- run: g++ -std=c++17 -Wall -Wextra *.cpp -o simulator
- - name: Führe Wahrheitstabellen-Tests aus
- # Weiche für Betriebssystem-Kompatibilität beim Ausführen des Binaries
- run: |
- if [ -f "./simulator" ]; then
- ./simulator
- else
- ./simulator.exe
- fi
+  build-and-test:
+   runs-on: ubuntu-latest # Startet eine komplett frische Linux-Maschine (Ubuntu)
+     steps:
+       - name: Quellcode auschecken
+         uses: actions/checkout@v4 # Kopiert den C++ Code aus dem Repo auf den Runner
+       - name: Kompiliere den Simulator
+        # Flags erklärt:
+        # -std=c++17 zwingend nötig für Smart Pointer (make_unique)
+        # -Wall -Wextra aktiviert alle wichtigen Compiler-Warnungen
+        run: g++ -std=c++17 -Wall -Wextra *.cpp -o simulator
+      - name: Führe Wahrheitstabellen-Tests aus
+        # Weiche für Betriebssystem-Kompatibilität beim Ausführen des Binaries
+        run: |
+          if [ -f "./simulator" ]; then
+            ./simulator
+          else
+           ./simulator.exe
+          fi
