@@ -1,0 +1,1 @@
+[![C++ Automated Test Suite](https://github.com/Philippeee861/Termin_06/actions/workflows/ci.yml/badge.svg)](https://github.com/Philippeee861/Termin_06/actions/workflows/ci.yml)
