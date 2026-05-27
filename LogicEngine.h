@@ -2,41 +2,29 @@
 
 #include <string>
 #include <vector>
+#include <memory>       // Teil A: #include <memory> hinzugefügt
 #include "Component.h"
 
 /**
- * Die LogicEngine ist der Kern unseres Simulators.
- * Sie verwaltet eine Liste von Bauteilen (Component*) und
- * simuliert jeden Taktschritt durch Aufruf von evaluate().
+ * Die LogicEngine verwaltet Komponenten mit Smart Pointern (RAII).
+ * Keine nackten Pointer, kein manuelles delete, kein Memory Leak.
  */
 class LogicEngine {
 private:
     std::string circuitName;
     int tickCount;
-    int currentOutput;
-
-    // Aufgabe 1: Vektor von Component-Zeigern
-    std::vector<Component*> circuit;
+    // Teil A: Vektor verwendet jetzt unique_ptr statt rohe Pointer
+    std::vector<std::unique_ptr<Component>> circuit;
 
 public:
-    // Konstruktor
     LogicEngine();
-
-    // Destruktor: gibt den Speicher aller Komponenten frei
     ~LogicEngine();
 
-    // Setzt den Namen der Schaltung
     void setCircuitName(std::string name);
 
-    // Aufgabe 1: Fügt ein Bauteil zum Vektor hinzu
-    void addComponent(Component* component);
+    // Teil A: Methode nimmt unique_ptr entgegen (übernimmt Ownership)
+    void addComponent(std::unique_ptr<Component> c);
 
-    // Aufgabe 2: Iteriert über alle Bauteile und ruft evaluate() auf
     void doTick();
-
-    // Gibt den aktuellen Ausgangswert zurück
-    int getOutputState() const;
-
-    // Gibt die Anzahl bisheriger Ticks zurück
-    int getTickCount() const;
+    int getComponentCount() const;
 };

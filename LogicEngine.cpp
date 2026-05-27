@@ -1,47 +1,56 @@
 #include "LogicEngine.h"
 #include <iostream>
 
-LogicEngine::LogicEngine() {
-    circuitName = "Unbenannt";
-    tickCount = 0;
-    currentOutput = 0;
+LogicEngine::LogicEngine() 
+    : circuitName("Unbenannt"), tickCount(0) {
+    std::cout << "[LogicEngine] Engine initialisiert" << std::endl;
 }
 
-// Destruktor: gibt den Speicher aller Komponenten frei
+/**
+ * Destruktor: unique_ptr-Elemente im Vektor werden automatisch zerstört.
+ * Kein manuelles delete nötig – das ist RAII!
+ */
 LogicEngine::~LogicEngine() {
-    for (Component* c : circuit) {
-        delete c;
-    }
+    std::cout << "[LogicEngine] Engine wird zerstört. Komponenten werden automatisch freigegeben..." << std::endl;
+    // circuit.clear() ist nicht nötig, passiert automatisch
+    // Aber wir rufen es explizit auf, damit die Destruktor-Ausgaben vor dieser Meldung erscheinen
     circuit.clear();
-    std::cout << "[Engine] Speicher freigegeben." << std::endl;
+    std::cout << "[LogicEngine] Alle Komponenten freigegeben." << std::endl;
 }
 
 void LogicEngine::setCircuitName(std::string name) {
     circuitName = name;
-    std::cout << "[Engine] Schaltungsname gesetzt auf: " << circuitName << std::endl;
+    std::cout << "[LogicEngine] Schaltungsname gesetzt: " << circuitName << std::endl;
 }
 
-// Aufgabe 1: Bauteil zum Vektor hinzufügen
-void LogicEngine::addComponent(Component* component) {
-    circuit.push_back(component);
-    std::cout << "[Engine] Bauteil hinzugefügt. Anzahl Bauteile: " << circuit.size() << std::endl;
-}
-
-// Aufgabe 2: Simulations-Schleife — ruft evaluate() auf jedem Bauteil auf
-void LogicEngine::doTick() {
-    tickCount++;
-    std::cout << "\n[Engine] === Tick #" << tickCount << " ===" << std::endl;
-
-    for (Component* c : circuit) {
-        c->evaluate(); // C++ findet automatisch die richtige Gatter-Logik (Polymorphismus)!
-        c->printState();
+/**
+ * Teil A: Nimmt unique_ptr entgegen und übernimmt den Besitz via std::move.
+ * Ein unique_ptr kann nicht kopiert werden – nur verschoben!
+ */
+void LogicEngine::addComponent(std::unique_ptr<Component> c) {
+    if (c != nullptr) {
+        circuit.push_back(std::move(c));  // Teil A: std::move übergibt Ownership
+        std::cout << "[LogicEngine] Komponente hinzugefügt. Gesamt: " << circuit.size() << std::endl;
     }
 }
 
-int LogicEngine::getOutputState() const {
-    return currentOutput;
+/**
+ * doTick(): Polymorphe Evaluation aller Komponenten.
+ * Der Smart Pointer verhält sich wie ein normaler Pointer beim Zugriff.
+ */
+void LogicEngine::doTick() {
+    tickCount++;
+    std::cout << "\n[Tick " << tickCount << "] Evaluiere " << circuit.size() 
+              << " Komponenten:" << std::endl;
+    
+    for (const auto& c : circuit) {
+        // unique_ptr unterstützt -> wie ein normaler Pointer
+        bool result = c->evaluate();
+        c->printState();
+        std::cout << "  => Ergebnis: " << (result ? "true" : "false") << std::endl;
+    }
 }
 
-int LogicEngine::getTickCount() const {
-    return tickCount;
+int LogicEngine::getComponentCount() const {
+    return circuit.size();
 }

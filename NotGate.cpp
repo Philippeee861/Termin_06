@@ -13,7 +13,7 @@ NotGate::NotGate(std::string n) : Component(n) {
  * Setzt Eingang B - aber NOT hat nur einen Eingang!
  * Diese Überschreibung (Override) gibt eine Warnung aus
  */
-void NotGate::setInputB(int val) {
+void NotGate::setInputB(int /* val */) {
     std::cout << "[" << name << " WARNUNG] NOT-Gatter hat keinen Eingang B!" << std::endl;
     std::cout << "           Nutzen Sie setInputA() für den einzigen Eingang." << std::endl;
 }
@@ -22,11 +22,11 @@ void NotGate::setInputB(int val) {
  * Berechnet die NOT-Logik:
  * output = NOT inA
  * 
- * Wir nutzen nur inA von der Basisklasse, ignorieren inB
+ * Die Methode speichert das Ergebnis und gibt es zurück.
  */
 bool NotGate::evaluate() {
-    output = (inA && !inB) || (!inA && inB);
-    return output; // ← fehlt!
+    output = !inA;
+    return output;
 }
 
 /**

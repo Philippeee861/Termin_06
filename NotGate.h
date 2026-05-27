@@ -27,8 +27,9 @@ public:
     /**
      * Berechnet das invertierte Ausgangssignal
      * output = NOT inA
+     * @return true wenn input 0 ist, false wenn input 1 ist
      */
-    bool evaluate() override; 
+    bool evaluate() override;
 
     /**
      * Gibt den aktuellen Zustand des Gatters aus

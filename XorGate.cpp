@@ -23,7 +23,7 @@ XorGate::XorGate(std::string n) : Component(n) {
  */
 bool XorGate::evaluate() {
     output = (inA && !inB) || (!inA && inB);
-    return output; // ← fehlt!
+    return output;
 }
 
 /**

@@ -13,9 +13,8 @@ OrGate::OrGate(std::string n) : Component(n) {
  * Berechnet die OR-Logik:
  * output = inA OR inB (mindestens einer muss true sein)
  * 
- * Wir greifen auf die protected Attribute der Basisklasse zu
+ * Die Methode speichert das Ergebnis und gibt es zurück.
  */
-
 bool OrGate::evaluate() {
     output = inA || inB;
     return output;

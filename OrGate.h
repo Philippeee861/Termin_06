@@ -20,8 +20,9 @@ public:
 
     /**
      * Berechnet das Ausgangssignal (OR-Logik: mindestens ein Eingang muss 1 sein)
+     * @return true wenn mindestens ein Eingang 1 ist, sonst false
      */
-    bool evaluate() override; 
+    bool evaluate() override;
 
     /**
      * Gibt den aktuellen Zustand des Gatters aus

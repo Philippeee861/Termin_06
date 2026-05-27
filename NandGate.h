@@ -1,14 +1,18 @@
 #pragma once
 
+#include "Component.h"
 #include "AndGate.h"
 #include "NotGate.h"
 
 /**
- * NAND-Gatter durch Komposition
+ * NAND-Gatter durch Komposition mit Polymorphismus-Integration
  * Kombiniert ein AndGate mit einem NotGate
  * NAND = NOT(AND)
+ * 
+ * Erbt von Component um sich polymorphisch verhalten zu können,
+ * aber nutzt intern Komposition.
  */
-class NandGate {
+class NandGate : public Component {
 private:
     AndGate andGate;
     NotGate notGate;
@@ -23,25 +27,23 @@ public:
     /**
      * Setzt Eingang A für das interne AND-Gatter
      */
-    void setInputA(int val);
+    void setInputA(int val) override;
 
     /**
      * Setzt Eingang B für das interne AND-Gatter
      */
-    void setInputB(int val);
+    void setInputB(int val) override;
 
     /**
      * Berechnet: NAND = NOT(AND(inA, inB))
+     * @return true wenn NAND-Logik 1 ergibt, sonst false
      */
-    void update();
-
-    /**
-     * Gibt das Ausgangssignal zurück
-     */
-    bool getOutput() const;
+    bool evaluate() override;
 
     /**
      * Gibt den Zustand aus
      */
-    void printState() const;
+    void printState() const override;
 };
+
+

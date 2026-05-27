@@ -1,221 +1,154 @@
 #include <iostream>
 #include <vector>
-#include <fstream>
-#include <sstream>
-#include <ctime>
+#include <memory>
+// Hier Ihre Gatter-Header inkludieren
 #include "Component.h"
 #include "AndGate.h"
 #include "OrGate.h"
 #include "NotGate.h"
-#include "NandGate.h"
 #include "XorGate.h"
-#include "LogicEngine.h"
+#include "NandGate.h"
 
-/**
- * Parser: Liest die Datei schaltzustaende.txt und parst die Ziffern
- */
-std::vector<int> parseInputFile(const std::string& filename) {
-    std::vector<int> signals;
-    std::ifstream inputFile(filename);
+int main() {
+    // 1. Globaler Test-Status
+    bool testPassed = true;
+    std::cout << "--- STARTE AUTOMATISIERTE WAHRHEITSTABELLEN-TESTS ---" << std::endl;
 
-    if (!inputFile.is_open()) {
-        std::cerr << "FEHLER: Datei '" << filename << "' konnte nicht geöffnet werden!" << std::endl;
-        return signals;
-    }
+    // ---------------------------------------------------------
+    // TESTBLOCK 1: AND-Gatter (4 Testfälle)
+    // ---------------------------------------------------------
+    {
+        auto andGate = std::make_unique<AndGate>("Test-AND");
+        // Test-Matrix: InputA, InputB, Erwartetes Ergebnis
+        int testCases[4][3] = {
+            {0, 0, 0},
+            {0, 1, 0},
+            {1, 0, 0},
+            {1, 1, 1}
+        };
+        for (int i = 0; i < 4; ++i) {
+            andGate->setInputA(testCases[i][0]);
+            andGate->setInputB(testCases[i][1]);
+            andGate->evaluate();
 
-    std::cout << "[Parser] Datei '" << filename << "' geöffnet." << std::endl;
-
-    std::string line;
-    while (std::getline(inputFile, line)) {
-        std::stringstream ss(line);
-        int value;
-        while (ss >> value) {
-            if (value == 0 || value == 1) {
-                signals.push_back(value);
-                std::cout << "[Parser] Signal gelesen: " << value << std::endl;
-            } else {
-                std::cerr << "[Parser WARNUNG] Ungültiger Wert: " << value << std::endl;
+            if (andGate->getOutput() != testCases[i][2]) {
+                std::cerr << "❌ TEST FAILED: AND bei Inputs A=" << testCases[i][0]
+                          << " B=" << testCases[i][1]
+                          << " -> Erhalten: " << andGate->getOutput()
+                          << " (Erwartet: " << testCases[i][2] << ")" << std::endl;
+                testPassed = false;
             }
         }
     }
 
-    inputFile.close();
-    std::cout << "[Parser] Insgesamt " << signals.size() << " Signale gelesen." << std::endl;
-    return signals;
-}
+    // ---------------------------------------------------------
+    // TESTBLOCK 2: OR-Gatter (4 Testfälle)
+    // ---------------------------------------------------------
+    {
+        auto orGate = std::make_unique<OrGate>("Test-OR");
+        int testCases[4][3] = {
+            {0, 0, 0},
+            {0, 1, 1},
+            {1, 0, 1},
+            {1, 1, 1}
+        };
+        for (int i = 0; i < 4; ++i) {
+            orGate->setInputA(testCases[i][0]);
+            orGate->setInputB(testCases[i][1]);
+            orGate->evaluate();
 
-
-int main() {
-    std::cout << "========================================" << std::endl;
-    std::cout << "Laboranweisung 3: Vererbung & Architektur" << std::endl;
-    std::cout << "Der Digitalschaltungs-Simulator - Musterlösung" << std::endl;
-    std::cout << "========================================\n" << std::endl;
-
-    // ================================================
-    // TEIL B & C: Neue Architektur mit Component
-    // ================================================
-
-    std::cout << "--- TEIL B & C: Basisklasse Component & Refactoring ---\n" << std::endl;
-
-    std::cout << "\n1. Gatter-Instanziierung mit benannten Konstruktoren:\n" << std::endl;
-    AndGate andGatter("Haupt-AND");
-    OrGate orGatter("Haupt-OR");
-    NotGate notGatter("Haupt-NOT");
-    NandGate nandGatter("Haupt-NAND");
-    XorGate xorGatter("Haupt-XOR");
-    std::cout << std::endl;
-
-    // ================================================
-    // TEIL D: Wahrheitstabellen verifizieren
-    // ================================================
-
-    std::cout << "\n--- TEIL D: Wahrheitstabellen-Verifikation ---\n" << std::endl;
-
-    std::cout << "\n=== AND-Gatter ===" << std::endl;
-    for (int a = 0; a <= 1; a++) {
-        for (int b = 0; b <= 1; b++) {
-            andGatter.setInputA(a);
-            andGatter.setInputB(b);
-            andGatter.evaluate();
-            std::cout << "A=" << a << " B=" << b << " => ";
-            andGatter.printState();
+            if (orGate->getOutput() != testCases[i][2]) {
+                std::cerr << "❌ TEST FAILED: OR bei Inputs A=" << testCases[i][0]
+                          << " B=" << testCases[i][1]
+                          << " -> Erhalten: " << orGate->getOutput()
+                          << " (Erwartet: " << testCases[i][2] << ")" << std::endl;
+                testPassed = false;
+            }
         }
     }
 
-    std::cout << "\n=== OR-Gatter ===" << std::endl;
-    for (int a = 0; a <= 1; a++) {
-        for (int b = 0; b <= 1; b++) {
-            orGatter.setInputA(a);
-            orGatter.setInputB(b);
-            orGatter.evaluate();
-            std::cout << "A=" << a << " B=" << b << " => ";
-            orGatter.printState();
+    // ---------------------------------------------------------
+    // TESTBLOCK 3: XOR-Gatter (4 Testfälle)
+    // ---------------------------------------------------------
+    {
+        auto xorGate = std::make_unique<XorGate>("Test-XOR");
+        int testCases[4][3] = {
+            {0, 0, 0},
+            {0, 1, 1},
+            {1, 0, 1},
+            {1, 1, 0}
+        };
+        for (int i = 0; i < 4; ++i) {
+            xorGate->setInputA(testCases[i][0]);
+            xorGate->setInputB(testCases[i][1]);
+            xorGate->evaluate();
+
+            if (xorGate->getOutput() != testCases[i][2]) {
+                std::cerr << "❌ TEST FAILED: XOR bei Inputs A=" << testCases[i][0]
+                          << " B=" << testCases[i][1]
+                          << " -> Erhalten: " << xorGate->getOutput()
+                          << " (Erwartet: " << testCases[i][2] << ")" << std::endl;
+                testPassed = false;
+            }
         }
     }
 
-    std::cout << "\n=== NOT-Gatter ===" << std::endl;
-    for (int a = 0; a <= 1; a++) {
-        notGatter.setInputA(a);
-        notGatter.evaluate();
-        std::cout << "A=" << a << " => ";
-        notGatter.printState();
-    }
+    // ---------------------------------------------------------
+    // TESTBLOCK 4: NAND-Gatter (4 Testfälle)
+    // ---------------------------------------------------------
+    {
+        auto nandGate = std::make_unique<NandGate>("Test-NAND");
+        int testCases[4][3] = {
+            {0, 0, 1},
+            {0, 1, 1},
+            {1, 0, 1},
+            {1, 1, 0}
+        };
+        for (int i = 0; i < 4; ++i) {
+            nandGate->setInputA(testCases[i][0]);
+            nandGate->setInputB(testCases[i][1]);
+            nandGate->evaluate();
 
-    std::cout << "\nWarnung beim Versuch, setInputB zu setzen:" << std::endl;
-    notGatter.setInputB(1);
-
-    std::cout << "\n=== XOR-Gatter (NEU!) ===" << std::endl;
-    for (int a = 0; a <= 1; a++) {
-        for (int b = 0; b <= 1; b++) {
-            xorGatter.setInputA(a);
-            xorGatter.setInputB(b);
-            xorGatter.evaluate();
-            std::cout << "A=" << a << " B=" << b << " => ";
-            xorGatter.printState();
+            if (nandGate->getOutput() != testCases[i][2]) {
+                std::cerr << "❌ TEST FAILED: NAND bei Inputs A=" << testCases[i][0]
+                          << " B=" << testCases[i][1]
+                          << " -> Erhalten: " << nandGate->getOutput()
+                          << " (Erwartet: " << testCases[i][2] << ")" << std::endl;
+                testPassed = false;
+            }
         }
     }
 
-    // ================================================
-    // ZUSATZAUFGABE 1: Parsen
-    // ================================================
+    // ---------------------------------------------------------
+    // TESTBLOCK 5: NOT-Gatter (2 Testfälle)
+    // ---------------------------------------------------------
+    {
+        auto notGate = std::make_unique<NotGate>("Test-NOT");
+        // Test-Matrix für 1 Input: InputA, Erwartetes Ergebnis
+        int testCases[2][2] = {
+            {0, 1},
+            {1, 0}
+        };
+        for (int i = 0; i < 2; ++i) {
+            notGate->setInputA(testCases[i][0]);
+            // Ein NOT-Gatter hat keinen B-Eingang
+            notGate->evaluate();
 
-    std::cout << "\n\n--- ZUSATZAUFGABE 1: Dateien-Parser ---\n" << std::endl;
-    std::vector<int> inputSignals = parseInputFile("schaltzustaende.txt");
-
-    if (!inputSignals.empty()) {
-        std::cout << "\n--- Simulation mit eingelesenen Signalen ---\n" << std::endl;
-
-        for (size_t i = 0; i < inputSignals.size(); i++) {
-            int signalA = inputSignals[i];
-            int signalB = inputSignals[(i + 1) % inputSignals.size()];
-
-            andGatter.setInputA(signalA);
-            andGatter.setInputB(signalB);
-            andGatter.evaluate();
-
-            std::cout << "Schritt " << (i + 1) << ": A=" << signalA << " B=" << signalB << " => ";
-            andGatter.printState();
+            if (notGate->getOutput() != testCases[i][1]) {
+                std::cerr << "❌ TEST FAILED: NOT bei Input A=" << testCases[i][0]
+                          << " -> Erhalten: " << notGate->getOutput()
+                          << " (Erwartet: " << testCases[i][1] << ")" << std::endl;
+                testPassed = false;
+            }
         }
-    } else {
-        std::cout << "Datei nicht vorhanden - übersprungen." << std::endl;
     }
 
-    // ================================================
-    // ZUSATZAUFGABE 2: Upcasting
-    // ================================================
-
-    std::cout << "\n\n--- ZUSATZAUFGABE 2: Upcasting ---\n" << std::endl;
-
-    std::vector<Component*> meineSchaltung;
-    meineSchaltung.push_back(new AndGate("Gatter-1"));
-    meineSchaltung.push_back(new OrGate("Gatter-2"));
-    meineSchaltung.push_back(new XorGate("Gatter-3"));
-
-    std::cout << "\nAlle Gatter wurden hinzugefügt!\n" << std::endl;
-
-    for (Component* comp : meineSchaltung) {
-        comp->setInputA(1);
-        comp->setInputB(0);
-        comp->evaluate();
-        comp->printState();
+    // 3. Finale Auswertung für die CI-Pipeline
+    if (!testPassed) {
+        std::cerr << "--- 🔴 PIPELINE-ABSTURZ: TESTS FEHLGESCHLAGEN ---" << std::endl;
+        return 1; // Signalisiert GitHub Actions (oder anderer CI): FEHLER!
     }
 
-    std::cout << "\nMemory freigeben:" << std::endl;
-    for (Component* comp : meineSchaltung) {
-        delete comp;
-        std::cout << "Gatter gelöscht." << std::endl;
-    }
-    meineSchaltung.clear();
-
-    // ================================================
-    // AUFGABE 3: LogicEngine mit Vektor-Management testen
-    // ================================================
-
-    std::cout << "\n\n--- AUFGABE: LogicEngine Simulation ---\n" << std::endl;
-
-    LogicEngine engine;
-    engine.setCircuitName("Testschaltung");
-
-    // Verschiedene Gatter-Typen zur Engine hinzufügen (Aufgabe 3)
-    // Eigentümerschaft liegt bei der Engine — sie gibt den Speicher im Destruktor frei
-    AndGate* engineAnd = new AndGate("Engine-AND");
-    OrGate*  engineOr  = new OrGate("Engine-OR");
-    XorGate* engineXor = new XorGate("Engine-XOR");
-    NotGate* engineNot = new NotGate("Engine-NOT");
-
-    // Eingänge vor dem ersten Tick setzen
-    engineAnd->setInputA(1); engineAnd->setInputB(1); // AND(1,1) = 1
-    engineOr ->setInputA(0); engineOr ->setInputB(1); // OR(0,1)  = 1
-    engineXor->setInputA(1); engineXor->setInputB(1); // XOR(1,1) = 0
-    engineNot->setInputA(1);                           // NOT(1)   = 0
-
-    engine.addComponent(engineAnd);
-    engine.addComponent(engineOr);
-    engine.addComponent(engineXor);
-    engine.addComponent(engineNot);
-
-    // Tick 1
-    engine.doTick();
-
-    // Eingänge für Tick 2 ändern
-    engineAnd->setInputA(0); engineAnd->setInputB(0); // AND(0,0) = 0
-    engineOr ->setInputA(1); engineOr ->setInputB(1); // OR(1,1)  = 1
-    engineXor->setInputA(1); engineXor->setInputB(0); // XOR(1,0) = 1
-    engineNot->setInputA(0);                           // NOT(0)   = 1
-
-    // Tick 2
-    engine.doTick();
-
-    std::cout << "\n[Engine] Simulation beendet nach " << engine.getTickCount() << " Ticks." << std::endl;
-
-    // ================================================
-    // Abschluss
-    // ================================================
-
-    std::cout << "\n========================================" << std::endl;
-    std::cout << "Refactoring erfolgreich abgeschlossen!" << std::endl;
-    std::cout << "Die neue Architektur ist wartbar und erweiterbar." << std::endl;
-    std::cout << "========================================\n" << std::endl;
-
-    return 0;
+    std::cout << "--- 🟢 ALLE TESTS BESTANDEN (18/18) ---" << std::endl;
+    return 0; // Signalisiert GitHub Actions: ERFOLG!
 }

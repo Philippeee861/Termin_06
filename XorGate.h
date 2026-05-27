@@ -26,8 +26,9 @@ public:
 
     /**
      * Berechnet die XOR-Logik
+     * @return true wenn die Eingänge unterschiedlich sind, sonst false
      */
-    bool evaluate() override; 
+    bool evaluate() override;
 
     /**
      * Gibt den aktuellen Zustand aus

@@ -13,12 +13,11 @@ AndGate::AndGate(std::string n) : Component(n) {
  * Berechnet die AND-Logik:
  * output = inA AND inB (beide müssen true sein)
  * 
- * Wir greifen auf die protected Attribute der Basisklasse zu
+ * Die Methode speichert das Ergebnis und gibt es zurück.
  */
-
 bool AndGate::evaluate() {
     output = inA && inB;
-    return output; // ← fehlt!
+    return output;
 }
 
 /**

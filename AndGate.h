@@ -20,8 +20,10 @@ public:
 
     /**
      * Berechnet das Ausgangssignal (AND-Logik: beide Eingänge müssen 1 sein)
+     * Das Keyword 'final' verhindert, dass Subklassen diese Methode überschreiben
+     * @return true wenn beide Eingänge 1 sind, sonst false
      */
-    bool evaluate() override; 
+    bool evaluate() override final;
 
     /**
      * Gibt den aktuellen Zustand des Gatters aus
