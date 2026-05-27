@@ -1,7 +1,7 @@
 name: C++ Automated Test Suite
 on:
   push:
-   branches: [ "main" ] # Pipeline startet bei jedem Push auf den main-Branch
+   branches: [ "master" ] # Pipeline startet bei jedem Push auf den main-Branch
 jobs:
   build-and-test:
      runs-on: ubuntu-latest # Startet eine komplett frische Linux-Maschine (Ubuntu)
