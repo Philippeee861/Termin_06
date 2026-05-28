@@ -20,7 +20,7 @@ public:
     LogicEngine();
     ~LogicEngine();
 
-    void setCircuitName(std::string name);
+    void setCircuitName(std::string m_name);
 
     // Teil A: Methode nimmt unique_ptr entgegen (übernimmt Ownership)
     void addComponent(std::unique_ptr<Gate> c);

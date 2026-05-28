@@ -1,36 +1,22 @@
 #include "XorGate.h"
-#include <iostream>
 
-/**
- * Konstruktor des XorGate
- * Der Name wird an die Basisklasse Component weitergegeben
- */
+XorGate::XorGate() {
+    m_inputs.resize(2);
+}
+
 XorGate::XorGate(std::string n) : Gate(n) {
-    std::cout << "[" << name << "] XOR-Gatter aktiviert" << std::endl;
+    m_inputs.resize(2);
 }
 
-/**
- * Berechnet die XOR-Logik:
- * output = inA XOR inB = (inA && !inB) || (!inA && inB)
- * 
- * Bedeutung: Ausgabe ist 1, wenn die Eingänge unterschiedlich sind
- * A | B | XOR
- * ---------
- * 0 | 0 | 0
- * 0 | 1 | 1
- * 1 | 0 | 1
- * 1 | 1 | 0
- */
-bool XorGate::evaluate() {
-    output = (inA && !inB) || (!inA && inB);
-    return output;
+void XorGate::evaluate() {
+    if (m_inputs[0] == nullptr) throw FloatingPinException(m_name, 0);
+    if (m_inputs[1] == nullptr) throw FloatingPinException(m_name, 1);
+    m_output = m_inputs[0]->getOutput() ^ m_inputs[1]->getOutput();
 }
 
-/**
- * Gibt den Zustand dieses XOR-Gatters aus
- */
 void XorGate::printState() const {
-    std::cout << "XorGate [" << name << ": A=" << (inA ? 1 : 0) 
-              << ", B=" << (inB ? 1 : 0) 
-              << "] => Output=" << (output ? 1 : 0) << std::endl;
+    bool a = m_inputs[0] ? m_inputs[0]->getOutput() : false;
+    bool b = m_inputs[1] ? m_inputs[1]->getOutput() : false;
+    std::cout << "XorGate [" << m_name << ": A=" << a << ", B=" << b
+              << "] => Output=" << m_output << std::endl;
 }

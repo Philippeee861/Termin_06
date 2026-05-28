@@ -1,11 +1,14 @@
 #pragma once
 #include "Component.h"
 
+/**
+ * XNOR-Gatter: Ausgabe ist 1 wenn beide Eingänge gleich sind
+ */
 class XnorGate : public Gate {
 public:
-    // Konstruktor – übergibt den Namen an die Basisklasse
-    XnorGate(std::string name);
+    XnorGate();
+    XnorGate(std::string n);
 
-    // XNOR-Logik: true wenn beide Eingänge gleich sind
-    bool evaluate() override;
+    void evaluate() override;
+    void printState() const override;
 };

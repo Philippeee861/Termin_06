@@ -1,30 +1,22 @@
 #include "OrGate.h"
-#include <iostream>
 
-/**
- * Konstruktor des OrGate
- * Der Name wird an die Basisklasse Component weitergegeben
- */
+OrGate::OrGate() {
+    m_inputs.resize(2);
+}
+
 OrGate::OrGate(std::string n) : Gate(n) {
-    std::cout << "[" << name << "] OR-Gatter aktiviert" << std::endl;
+    m_inputs.resize(2);
 }
 
-/**
- * Berechnet die OR-Logik:
- * output = inA OR inB (mindestens einer muss true sein)
- * 
- * Die Methode speichert das Ergebnis und gibt es zurück.
- */
-bool OrGate::evaluate() {
-    output = inA || inB;
-    return output;
+void OrGate::evaluate() {
+    if (m_inputs[0] == nullptr) throw FloatingPinException(m_name, 0);
+    if (m_inputs[1] == nullptr) throw FloatingPinException(m_name, 1);
+    m_output = m_inputs[0]->getOutput() || m_inputs[1]->getOutput();
 }
 
-/**
- * Gibt den Zustand dieses OR-Gatters aus
- */
 void OrGate::printState() const {
-    std::cout << "OrGate [" << name << ": A=" << (inA ? 1 : 0) 
-              << ", B=" << (inB ? 1 : 0) 
-              << "] => Output=" << (output ? 1 : 0) << std::endl;
+    bool a = m_inputs[0] ? m_inputs[0]->getOutput() : false;
+    bool b = m_inputs[1] ? m_inputs[1]->getOutput() : false;
+    std::cout << "OrGate [" << m_name << ": A=" << a << ", B=" << b
+              << "] => Output=" << m_output << std::endl;
 }

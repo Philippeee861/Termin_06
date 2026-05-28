@@ -1,43 +1,20 @@
 #include "NotGate.h"
-#include <iostream>
 
-/**
- * Konstruktor des NotGate
- * Der Name wird an die Basisklasse Gate weitergegeben
- */
+NotGate::NotGate() {
+    m_inputs.resize(1);
+}
+
 NotGate::NotGate(std::string n) : Gate(n) {
-    std::cout << "[" << name << "] NOT-Gatter aktiviert" << std::endl;
+    m_inputs.resize(1);
 }
 
-/**
- * Setzt Eingang B - aber NOT hat nur einen Eingang!
- * Diese Überschreibung (Override) gibt eine Warnung aus
- */
-void NotGate::setInputB(int /* val */) {
-    std::cout << "[" << name << " WARNUNG] NOT-Gatter hat keinen Eingang B!" << std::endl;
-    std::cout << "           Nutzen Sie setInputA() für den einzigen Eingang." << std::endl;
+void NotGate::evaluate() {
+    if (m_inputs[0] == nullptr) throw FloatingPinException(m_name, 0);
+    m_output = !m_inputs[0]->getOutput();
 }
 
-/**
- * Berechnet die NOT-Logik:
- * output = NOT inA
- * 
- * Die Methode speichert das Ergebnis und gibt es zurück.
- */
-bool NotGate::evaluate() {
-    output = !inA;
-    return output;
-}
-
-/**
- * Gibt den Zustand dieses NOT-Gatters aus
- */
 void NotGate::printState() const {
-    std::cout << "NotGate [" << name << ": Input=" << (inA ? 1 : 0) 
-              << "] => Output=" << (output ? 1 : 0) << std::endl;
+    bool a = m_inputs[0] ? m_inputs[0]->getOutput() : false;
+    std::cout << "NotGate [" << m_name << ": A=" << a
+              << "] => Output=" << m_output << std::endl;
 }
-
-
-
-
-

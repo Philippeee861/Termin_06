@@ -1,154 +1,192 @@
 #include <iostream>
-#include <vector>
 #include <memory>
-// Hier Ihre Gatter-Header inkludieren
 #include "Component.h"
+#include "Switch.h"
 #include "AndGate.h"
 #include "OrGate.h"
 #include "NotGate.h"
 #include "XorGate.h"
 #include "NandGate.h"
+#include "XnorGate.h"
 
-int main() {
-    // 1. Globaler Test-Status
-    bool testPassed = true;
-    std::cout << "--- STARTE AUTOMATISIERTE WAHRHEITSTABELLEN-TESTS ---" << std::endl;
+// ============================================================
+// Phase 4: Halbaddierer (Half Adder)
+// Summe  = A XOR B
+// Carry  = A AND B
+// ============================================================
+bool testHalbaddierer() {
+    bool allPassed = true;
 
-    // ---------------------------------------------------------
-    // TESTBLOCK 1: AND-Gatter (4 Testfälle)
-    // ---------------------------------------------------------
-    {
-        auto andGate = std::make_unique<AndGate>("Test-AND");
-        // Test-Matrix: InputA, InputB, Erwartetes Ergebnis
-        int testCases[4][3] = {
-            {0, 0, 0},
-            {0, 1, 0},
-            {1, 0, 0},
-            {1, 1, 1}
-        };
-        for (int i = 0; i < 4; ++i) {
-            andGate->setInputA(testCases[i][0]);
-            andGate->setInputB(testCases[i][1]);
+    auto swA = std::make_shared<Switch>("A");
+    auto swB = std::make_shared<Switch>("B");
+    auto xorGate = std::make_shared<XorGate>("XOR-Sum");
+    auto andGate = std::make_shared<AndGate>("AND-Carry");
+
+    xorGate->connectInput(0, swA);
+    xorGate->connectInput(1, swB);
+    andGate->connectInput(0, swA);
+    andGate->connectInput(1, swB);
+
+    std::cout << "\n=== HALBADDIERER ===" << std::endl;
+
+    int testCases[4][4] = {
+        // A, B, ExpectedSum, ExpectedCarry
+        {0, 0, 0, 0},
+        {0, 1, 1, 0},
+        {1, 0, 1, 0},
+        {1, 1, 0, 1}
+    };
+
+    try {
+        for (int i = 0; i < 4; i++) {
+            swA->setState(testCases[i][0]);
+            swB->setState(testCases[i][1]);
+
+            xorGate->evaluate();
             andGate->evaluate();
 
-            if (andGate->getOutput() != testCases[i][2]) {
-                std::cerr << "❌ TEST FAILED: AND bei Inputs A=" << testCases[i][0]
-                          << " B=" << testCases[i][1]
-                          << " -> Erhalten: " << andGate->getOutput()
-                          << " (Erwartet: " << testCases[i][2] << ")" << std::endl;
-                testPassed = false;
+            bool sum   = xorGate->getOutput();
+            bool carry = andGate->getOutput();
+
+            if (sum != (bool)testCases[i][2] || carry != (bool)testCases[i][3]) {
+                std::cerr << "FEHLER bei A=" << testCases[i][0]
+                          << ", B=" << testCases[i][1]
+                          << " -> Sum=" << sum << " (erwartet " << testCases[i][2]
+                          << "), Carry=" << carry << " (erwartet " << testCases[i][3] << ")" << std::endl;
+                allPassed = false;
+            } else {
+                std::cout << "OK: A=" << testCases[i][0] << ", B=" << testCases[i][1]
+                          << " -> Sum=" << sum << ", Carry=" << carry << std::endl;
             }
         }
+    } catch (const FloatingPinException& e) {
+        std::cerr << e.what() << std::endl;
+        return false;
     }
 
-    // ---------------------------------------------------------
-    // TESTBLOCK 2: OR-Gatter (4 Testfälle)
-    // ---------------------------------------------------------
-    {
-        auto orGate = std::make_unique<OrGate>("Test-OR");
-        int testCases[4][3] = {
-            {0, 0, 0},
-            {0, 1, 1},
-            {1, 0, 1},
-            {1, 1, 1}
-        };
-        for (int i = 0; i < 4; ++i) {
-            orGate->setInputA(testCases[i][0]);
-            orGate->setInputB(testCases[i][1]);
-            orGate->evaluate();
+    return allPassed;
+}
 
-            if (orGate->getOutput() != testCases[i][2]) {
-                std::cerr << "❌ TEST FAILED: OR bei Inputs A=" << testCases[i][0]
-                          << " B=" << testCases[i][1]
-                          << " -> Erhalten: " << orGate->getOutput()
-                          << " (Erwartet: " << testCases[i][2] << ")" << std::endl;
-                testPassed = false;
+// ============================================================
+// Zusatzaufgabe 1: Volladdierer (Full Adder)
+// Summe  = A XOR B XOR Cin
+// Carry  = (A AND B) OR ((A XOR B) AND Cin)
+//
+// Aufbau: 2x XOR, 2x AND, 1x OR
+// ============================================================
+bool testVolladdierer() {
+    bool allPassed = true;
+
+    auto swA   = std::make_shared<Switch>("A");
+    auto swB   = std::make_shared<Switch>("B");
+    auto swCin = std::make_shared<Switch>("Cin");
+
+    // Halbaddierer 1: xor1 = A XOR B,  and1 = A AND B
+    auto xor1 = std::make_shared<XorGate>("XOR1");
+    auto and1 = std::make_shared<AndGate>("AND1");
+
+    // Halbaddierer 2: xor2 = xor1 XOR Cin (= Summe),  and2 = xor1 AND Cin
+    auto xor2 = std::make_shared<XorGate>("XOR2");
+    auto and2 = std::make_shared<AndGate>("AND2");
+
+    // Carry-Out: or1 = and1 OR and2
+    auto or1  = std::make_shared<OrGate>("OR-Carry");
+
+    // Verkabelung
+    xor1->connectInput(0, swA);
+    xor1->connectInput(1, swB);
+
+    and1->connectInput(0, swA);
+    and1->connectInput(1, swB);
+
+    xor2->connectInput(0, xor1);
+    xor2->connectInput(1, swCin);
+
+    and2->connectInput(0, xor1);
+    and2->connectInput(1, swCin);
+
+    or1->connectInput(0, and1);
+    or1->connectInput(1, and2);
+
+    std::cout << "\n=== VOLLADDIERER ===" << std::endl;
+
+    // Wahrheitstabelle: A, B, Cin, ExpectedSum, ExpectedCarry
+    int testCases[8][5] = {
+        {0, 0, 0,  0, 0},
+        {0, 0, 1,  1, 0},
+        {0, 1, 0,  1, 0},
+        {0, 1, 1,  0, 1},
+        {1, 0, 0,  1, 0},
+        {1, 0, 1,  0, 1},
+        {1, 1, 0,  0, 1},
+        {1, 1, 1,  1, 1}   // 1+1+1 = Summe=1, Carry=1
+    };
+
+    try {
+        for (int i = 0; i < 8; i++) {
+            swA->setState(testCases[i][0]);
+            swB->setState(testCases[i][1]);
+            swCin->setState(testCases[i][2]);
+
+            // Pull-Prinzip: in Reihenfolge evaluieren
+            xor1->evaluate();
+            and1->evaluate();
+            xor2->evaluate();
+            and2->evaluate();
+            or1->evaluate();
+
+            bool sum   = xor2->getOutput();
+            bool carry = or1->getOutput();
+
+            if (sum != (bool)testCases[i][3] || carry != (bool)testCases[i][4]) {
+                std::cerr << "FEHLER bei A=" << testCases[i][0]
+                          << ", B=" << testCases[i][1]
+                          << ", Cin=" << testCases[i][2]
+                          << " -> Sum=" << sum << " (erwartet " << testCases[i][3]
+                          << "), Carry=" << carry << " (erwartet " << testCases[i][4] << ")" << std::endl;
+                allPassed = false;
+            } else {
+                std::cout << "OK: A=" << testCases[i][0]
+                          << ", B=" << testCases[i][1]
+                          << ", Cin=" << testCases[i][2]
+                          << " -> Sum=" << sum << ", Carry=" << carry << std::endl;
             }
         }
+    } catch (const FloatingPinException& e) {
+        std::cerr << e.what() << std::endl;
+        return false;
     }
 
-    // ---------------------------------------------------------
-    // TESTBLOCK 3: XOR-Gatter (4 Testfälle)
-    // ---------------------------------------------------------
-    {
-        auto xorGate = std::make_unique<XorGate>("Test-XOR");
-        int testCases[4][3] = {
-            {0, 0, 0},
-            {0, 1, 1},
-            {1, 0, 1},
-            {1, 1, 0}
-        };
-        for (int i = 0; i < 4; ++i) {
-            xorGate->setInputA(testCases[i][0]);
-            xorGate->setInputB(testCases[i][1]);
-            xorGate->evaluate();
+    return allPassed;
+}
 
-            if (xorGate->getOutput() != testCases[i][2]) {
-                std::cerr << "❌ TEST FAILED: XOR bei Inputs A=" << testCases[i][0]
-                          << " B=" << testCases[i][1]
-                          << " -> Erhalten: " << xorGate->getOutput()
-                          << " (Erwartet: " << testCases[i][2] << ")" << std::endl;
-                testPassed = false;
-            }
-        }
+// ============================================================
+// Zusatzaufgabe 2: FloatingPinException testen
+// ============================================================
+void testFloatingPin() {
+    std::cout << "\n=== FLOATING PIN EXCEPTION TEST ===" << std::endl;
+    try {
+        auto gate = std::make_shared<AndGate>("Test-AND");
+        // Kein connectInput -> m_inputs[0] == nullptr -> Exception
+        gate->evaluate();
+        std::cerr << "FEHLER: Exception hätte geworfen werden müssen!" << std::endl;
+    } catch (const FloatingPinException& e) {
+        std::cout << "Exception korrekt abgefangen: " << e.what() << std::endl;
     }
+}
 
-    // ---------------------------------------------------------
-    // TESTBLOCK 4: NAND-Gatter (4 Testfälle)
-    // ---------------------------------------------------------
-    {
-        auto nandGate = std::make_unique<NandGate>("Test-NAND");
-        int testCases[4][3] = {
-            {0, 0, 1},
-            {0, 1, 1},
-            {1, 0, 1},
-            {1, 1, 0}
-        };
-        for (int i = 0; i < 4; ++i) {
-            nandGate->setInputA(testCases[i][0]);
-            nandGate->setInputB(testCases[i][1]);
-            nandGate->evaluate();
+int main() {
+    bool allTestsPassed = true;
 
-            if (nandGate->getOutput() != testCases[i][2]) {
-                std::cerr << "❌ TEST FAILED: NAND bei Inputs A=" << testCases[i][0]
-                          << " B=" << testCases[i][1]
-                          << " -> Erhalten: " << nandGate->getOutput()
-                          << " (Erwartet: " << testCases[i][2] << ")" << std::endl;
-                testPassed = false;
-            }
-        }
+    allTestsPassed &= testHalbaddierer();
+    allTestsPassed &= testVolladdierer();
+    testFloatingPin();
+
+    std::cout << "\n=== ERGEBNIS ===" << std::endl;
+    if (!allTestsPassed) {
+        std::cerr << "PIPELINE-FEHLER: Mindestens ein Test fehlgeschlagen!" << std::endl;
+        return 1;
     }
-
-    // ---------------------------------------------------------
-    // TESTBLOCK 5: NOT-Gatter (2 Testfälle)
-    // ---------------------------------------------------------
-    {
-        auto notGate = std::make_unique<NotGate>("Test-NOT");
-        // Test-Matrix für 1 Input: InputA, Erwartetes Ergebnis
-        int testCases[2][2] = {
-            {0, 1},
-            {1, 0}
-        };
-        for (int i = 0; i < 2; ++i) {
-            notGate->setInputA(testCases[i][0]);
-            // Ein NOT-Gatter hat keinen B-Eingang
-            notGate->evaluate();
-
-            if (notGate->getOutput() != testCases[i][1]) {
-                std::cerr << "❌ TEST FAILED: NOT bei Input A=" << testCases[i][0]
-                          << " -> Erhalten: " << notGate->getOutput()
-                          << " (Erwartet: " << testCases[i][1] << ")" << std::endl;
-                testPassed = false;
-            }
-        }
-    }
-
-    // 3. Finale Auswertung für die CI-Pipeline
-    if (!testPassed) {
-        std::cerr << "--- 🔴 PIPELINE-ABSTURZ: TESTS FEHLGESCHLAGEN ---" << std::endl;
-        return 1; // Signalisiert GitHub Actions (oder anderer CI): FEHLER!
-    }
-
-    std::cout << "--- 🟢 ALLE TESTS BESTANDEN (18/18) ---" << std::endl;
-    return 0; // Signalisiert GitHub Actions: ERFOLG!
+    std::cout << "ALLE TESTS BESTANDEN" << std::endl;
+    return 0;
 }

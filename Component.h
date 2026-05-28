@@ -1,30 +1,52 @@
 #pragma once
-
+#include <vector>
+#include <memory>
 #include <string>
 #include <iostream>
+#include <exception>
+
+/**
+ * FloatingPinException (Zusatzaufgabe 2)
+ * Wird geworfen, wenn ein Eingangs-Pin nicht verbunden ist
+ */
+class FloatingPinException : public std::exception {
+private:
+    std::string m_message;
+public:
+    FloatingPinException(const std::string& gateName, int pinIndex)
+        : m_message("FloatingPinException: Pin " + std::to_string(pinIndex) +
+                    " am Gatter '" + gateName + "' ist nicht verbunden!") {}
+
+    const char* what() const noexcept override {
+        return m_message.c_str();
+    }
+};
 
 /**
  * Gate (Basisklasse) - Abstraktion für alle Logikgatter
+ * Phase 1: Universelle Anschlussleiste mit shared_ptr
  */
 class Gate {
 protected:
-    std::string name;
-    bool inA;
-    bool inB;
-    bool output;
+    std::string m_name;
+    std::vector<std::shared_ptr<Gate>> m_inputs;
+    bool m_output = false;
 
 public:
-    Gate(std::string n);
+    Gate() : m_name("unnamed") {}
+    Gate(std::string n) : m_name(n) {}
 
-    virtual void setInputA(int val);
-    virtual void setInputB(int val);
-    bool getOutput() const;
+    /**
+     * Verbindet einen Eingangs-Pin mit einem anderen Gatter (das "Kabel")
+     * Phase 1, Schritt 3
+     */
+    void connectInput(int index, std::shared_ptr<Gate> source);
 
-    virtual bool evaluate() = 0;
+    bool getOutput() const { return m_output; }
+    std::string getName() const { return m_name; }
+
+    virtual void evaluate() = 0;
     virtual void printState() const = 0;
 
-    // Vorbereitung: Destruktor mit Konsolenausgabe (beweist Memory-Freigabe)
-    virtual ~Gate() {
-        std::cout << "Zerstöre Bauteil: " << name << std::endl;
-    }
+    virtual ~Gate() {}
 };

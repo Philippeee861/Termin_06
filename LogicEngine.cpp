@@ -1,4 +1,4 @@
-#include "LogicEngine.h"
+/*#include "LogicEngine.h"
 #include <iostream>
 
 LogicEngine::LogicEngine() 
@@ -9,7 +9,7 @@ LogicEngine::LogicEngine()
 /**
  * Destruktor: unique_ptr-Elemente im Vektor werden automatisch zerstört.
  * Kein manuelles delete nötig – das ist RAII!
- */
+ 
 LogicEngine::~LogicEngine() {
     std::cout << "[LogicEngine] Engine wird zerstört. Komponenten werden automatisch freigegeben..." << std::endl;
     // circuit.clear() ist nicht nötig, passiert automatisch
@@ -18,15 +18,15 @@ LogicEngine::~LogicEngine() {
     std::cout << "[LogicEngine] Alle Komponenten freigegeben." << std::endl;
 }
 
-void LogicEngine::setCircuitName(std::string name) {
-    circuitName = name;
+void LogicEngine::setCircuitName(std::string m_name) {
+    circuitName = m_name;
     std::cout << "[LogicEngine] Schaltungsname gesetzt: " << circuitName << std::endl;
 }
 
 /**
  * Teil A: Nimmt unique_ptr entgegen und übernimmt den Besitz via std::move.
  * Ein unique_ptr kann nicht kopiert werden – nur verschoben!
- */
+ 
 void LogicEngine::addComponent(std::unique_ptr<Gate> c) {
     if (c != nullptr) {
         circuit.push_back(std::move(c));  // Teil A: std::move übergibt Ownership
@@ -37,7 +37,7 @@ void LogicEngine::addComponent(std::unique_ptr<Gate> c) {
 /**
  * doTick(): Polymorphe Evaluation aller Komponenten.
  * Der Smart Pointer verhält sich wie ein normaler Pointer beim Zugriff.
- */
+
 void LogicEngine::doTick() {
     tickCount++;
     std::cout << "\n[Tick " << tickCount << "] Evaluiere " << circuit.size() 
@@ -54,3 +54,4 @@ void LogicEngine::doTick() {
 int LogicEngine::getComponentCount() const {
     return circuit.size();
 }
+*/
