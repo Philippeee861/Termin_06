@@ -3,9 +3,9 @@
 
 /**
  * Konstruktor des AndGate
- * Der Name wird an die Basisklasse Component weitergegeben
+ * Der Name wird an die Basisklasse Gate weitergegeben
  */
-AndGate::AndGate(std::string n) : Component(n) {
+AndGate::AndGate(std::string n) : Gate(n) {
     std::cout << "[" << name << "] AND-Gatter aktiviert" << std::endl;
 }
 

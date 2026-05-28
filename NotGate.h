@@ -3,14 +3,14 @@
 #include "Component.h"
 
 /**
- * NOT-Gatter Klasse (erbt von Component)
+ * NOT-Gatter Klasse (erbt von Gate)
  * Ausgabe ist invertiert - WICHTIG: NOT hat nur einen Eingang!
  * 
  * Durch die Vererbung bekommen wir inA, inB und output, aber:
  * - Wir nutzen nur inA als echten Eingang
  * - setInputB() ist überschrieben, um eine Warnung auszugeben
  */
-class NotGate : public Component {
+class NotGate : public Gate {
 public:
     /**
      * Konstruktor: Nimmt einen Namen entgegen

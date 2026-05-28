@@ -14,7 +14,7 @@ private:
     std::string circuitName;
     int tickCount;
     // Teil A: Vektor verwendet jetzt unique_ptr statt rohe Pointer
-    std::vector<std::unique_ptr<Component>> circuit;
+    std::vector<std::unique_ptr<Gate>> circuit;
 
 public:
     LogicEngine();
@@ -23,7 +23,7 @@ public:
     void setCircuitName(std::string name);
 
     // Teil A: Methode nimmt unique_ptr entgegen (übernimmt Ownership)
-    void addComponent(std::unique_ptr<Component> c);
+    void addComponent(std::unique_ptr<Gate> c);
 
     void doTick();
     int getComponentCount() const;

@@ -16,7 +16,7 @@
  * Das zeigt die Kraft der Vererbung:
  * Wir brauchen nur noch die spezifische Logik zu implementieren!
  */
-class XorGate : public Component {
+class XorGate : public Gate {
 public:
     /**
      * Konstruktor: Nimmt einen Namen entgegen

@@ -5,7 +5,7 @@
  * Konstruktor des OrGate
  * Der Name wird an die Basisklasse Component weitergegeben
  */
-OrGate::OrGate(std::string n) : Component(n) {
+OrGate::OrGate(std::string n) : Gate(n) {
     std::cout << "[" << name << "] OR-Gatter aktiviert" << std::endl;
 }
 

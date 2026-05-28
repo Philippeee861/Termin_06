@@ -5,7 +5,7 @@
  * Konstruktor des XorGate
  * Der Name wird an die Basisklasse Component weitergegeben
  */
-XorGate::XorGate(std::string n) : Component(n) {
+XorGate::XorGate(std::string n) : Gate(n) {
     std::cout << "[" << name << "] XOR-Gatter aktiviert" << std::endl;
 }
 

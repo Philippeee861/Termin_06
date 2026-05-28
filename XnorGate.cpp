@@ -4,7 +4,7 @@
  * Konstruktor des XNOR-Gatters
  * Ruft den Konstruktor der Basisklasse Component auf
  */
-XnorGate::XnorGate(std::string name) : Component(name) {}
+XnorGate::XnorGate(std::string name) : Gate(name) {}
 
 /**
  * Implementierung der XNOR-Logik

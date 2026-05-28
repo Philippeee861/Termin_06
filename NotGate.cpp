@@ -3,9 +3,9 @@
 
 /**
  * Konstruktor des NotGate
- * Der Name wird an die Basisklasse Component weitergegeben
+ * Der Name wird an die Basisklasse Gate weitergegeben
  */
-NotGate::NotGate(std::string n) : Component(n) {
+NotGate::NotGate(std::string n) : Gate(n) {
     std::cout << "[" << name << "] NOT-Gatter aktiviert" << std::endl;
 }
 

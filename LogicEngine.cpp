@@ -27,7 +27,7 @@ void LogicEngine::setCircuitName(std::string name) {
  * Teil A: Nimmt unique_ptr entgegen und übernimmt den Besitz via std::move.
  * Ein unique_ptr kann nicht kopiert werden – nur verschoben!
  */
-void LogicEngine::addComponent(std::unique_ptr<Component> c) {
+void LogicEngine::addComponent(std::unique_ptr<Gate> c) {
     if (c != nullptr) {
         circuit.push_back(std::move(c));  // Teil A: std::move übergibt Ownership
         std::cout << "[LogicEngine] Komponente hinzugefügt. Gesamt: " << circuit.size() << std::endl;

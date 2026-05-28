@@ -1,7 +1,7 @@
 #pragma once
 #include "Component.h"
 
-class XnorGate : public Component {
+class XnorGate : public Gate {
 public:
     // Konstruktor – übergibt den Namen an die Basisklasse
     XnorGate(std::string name);

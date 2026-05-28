@@ -9,10 +9,10 @@
  * Kombiniert ein AndGate mit einem NotGate
  * NAND = NOT(AND)
  * 
- * Erbt von Component um sich polymorphisch verhalten zu können,
+ * Erbt von Gate um sich polymorphisch verhalten zu können,
  * aber nutzt intern Komposition.
  */
-class NandGate : public Component {
+class NandGate : public Gate {
 private:
     AndGate andGate;
     NotGate notGate;

@@ -3,14 +3,14 @@
 #include "Component.h"
 
 /**
- * AND-Gatter Klasse (erbt von Component)
+ * AND-Gatter Klasse (erbt von Gate)
  * Ausgabe ist 1, nur wenn beide Eingänge 1 sind
  * 
  * Durch die Vererbung erhalten wir automatisch:
  * - Attribute: name, inA, inB, output (protected)
  * - Methoden: setInputA(), setInputB(), getOutput()
  */
-class AndGate : public Component {
+class AndGate : public Gate {
 public:
     /**
      * Konstruktor: Nimmt einen Namen entgegen und leitet ihn an die Basisklasse weiter

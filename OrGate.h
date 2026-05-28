@@ -10,7 +10,7 @@
  * - Attribute: name, inA, inB, output (protected)
  * - Methoden: setInputA(), setInputB(), getOutput()
  */
-class OrGate : public Component {
+class OrGate : public Gate {
 public:
     /**
      * Konstruktor: Nimmt einen Namen entgegen und leitet ihn an die Basisklasse weiter

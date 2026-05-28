@@ -4,9 +4,9 @@
 #include <iostream>
 
 /**
- * Component (Basisklasse) - Abstraktion für alle Logikgatter
+ * Gate (Basisklasse) - Abstraktion für alle Logikgatter
  */
-class Component {
+class Gate {
 protected:
     std::string name;
     bool inA;
@@ -14,7 +14,7 @@ protected:
     bool output;
 
 public:
-    Component(std::string n);
+    Gate(std::string n);
 
     virtual void setInputA(int val);
     virtual void setInputB(int val);
@@ -24,7 +24,7 @@ public:
     virtual void printState() const = 0;
 
     // Vorbereitung: Destruktor mit Konsolenausgabe (beweist Memory-Freigabe)
-    virtual ~Component() {
+    virtual ~Gate() {
         std::cout << "Zerstöre Bauteil: " << name << std::endl;
     }
 };
