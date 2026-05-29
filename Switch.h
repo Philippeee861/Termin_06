@@ -19,4 +19,7 @@ public:
     void printState() const override {
         std::cout << "Switch [" << m_name << "] => Output=" << (m_output ? 1 : 0) << std::endl;
     }
+    virtual void reset() {
+    m_isCalculated = false;
+    }
 };

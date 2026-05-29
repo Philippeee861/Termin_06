@@ -9,8 +9,16 @@ NotGate::NotGate(std::string n) : Gate(n) {
 }
 
 void NotGate::evaluate() {
-    if (m_inputs[0] == nullptr) throw FloatingPinException(m_name, 0);
-    m_output = !m_inputs[0]->getOutput();
+    if (m_isCalculated) return; // Cache Hit! Sofortiger Abbruch der Rekursion.
+    // 1. DFS: Vorgänger zwingen, sich zu berechnen!
+    if (m_inputs[0] != nullptr) m_inputs[0]->evaluate();
+     
+    // 2. Werte sicher auslesen (mit Fallback bei fehlendem Kabel)
+    bool valA = (m_inputs[0] != nullptr) ? m_inputs[0]->getOutput() : false;
+    
+    // 3. Eigene Logik anwenden
+    m_output = !valA;
+    m_isCalculated = true; // Gedächtnis versiegeln
 }
 
 void NotGate::printState() const {

@@ -9,9 +9,11 @@ NandGate::NandGate(std::string n) : Gate(n) {
 }
 
 void NandGate::evaluate() {
+    if (m_isCalculated) return; // Cache Hit! Sofortiger Abbruch der Rekursion.
     if (m_inputs[0] == nullptr) throw FloatingPinException(m_name, 0);
     if (m_inputs[1] == nullptr) throw FloatingPinException(m_name, 1);
     m_output = !(m_inputs[0]->getOutput() && m_inputs[1]->getOutput());
+    m_isCalculated = true; // Gedächtnis versiegeln
 }
 
 void NandGate::printState() const {

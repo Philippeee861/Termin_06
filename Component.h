@@ -31,10 +31,15 @@ protected:
     std::string m_name;
     std::vector<std::shared_ptr<Gate>> m_inputs;
     bool m_output = false;
+    bool m_isCalculated = false; // Unser Cache-Flag
 
 public:
     Gate() : m_name("unnamed") {}
     Gate(std::string n) : m_name(n) {}
+    virtual void reset() {
+    m_isCalculated = false;
+    m_output = false;
+}
 
     /**
      * Verbindet einen Eingangs-Pin mit einem anderen Gatter (das "Kabel")
