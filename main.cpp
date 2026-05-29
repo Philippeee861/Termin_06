@@ -71,6 +71,40 @@ bool testHalbaddierer() {
 
 
 int main() {
+    //Hier: Termin_10
+    auto FlipFlop = std::make_shared<DFlipFlop>("FLIPFLOP");
+    auto andGate0 = std::make_shared<AndGate>("AND0");
+    auto swD = std::make_shared<Switch>("D");
+    auto swE = std::make_shared<Switch>("E");
+    std::vector<std::shared_ptr<Gate>>allGates = { andGate0 };
+    std::vector<std::shared_ptr<DFlipFlop>>allFlipFlops = { FlipFlop };
+    andGate0->connectInput(0, swD);
+    andGate0->connectInput(1, swE);
+
+    bool testCases[4][2] = {
+        {0, 0},
+        {0, 1},
+        {1, 0},
+        {1, 1}
+    };
+    FlipFlop->connectInput(0, andGate0);
+    
+    for(int i = 0; i < 10; i++){
+    for (const auto& gate : allGates) gate->reset();
+
+    swD->setState(testCases[i % 4][0]);
+    swE->setState(testCases[i % 4][1]);
+
+    andGate0->evaluate();
+    FlipFlop->evaluate();          // ← das fehlte
+
+    std::cout << "Takt " << i << ": FF=" << FlipFlop->getOutput() << std::endl;
+
+    for(const auto& flipFlop : allFlipFlops) flipFlop->onClockTick();
+}
+
+
+
 
     bool zahlA = 1;
     bool zahlB = 1;
